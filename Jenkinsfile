@@ -10,11 +10,18 @@ pipeline {
       }
     }
     stage('Build') {
+      environment {
+        DOCKER_IMAGE = "lavank179/todo-k8s-ui:${BUILD_NUMBER}"
+        REGISTRY_CREDENTIALS = credentials('docker-creds')
+      }
       steps {
         script {
-          sh 'ls -ltr'
-          sh 'cd Todo-App-Kubernetes'
-          sh 'ls -a'
+          sh 'ls -ltr && cd frontend && docker build -t ${DOCKER_IMAGE} .'
+          def dockerImage = docker.image("${DOCKER_IMAGE}")
+          docker.withDockerRegistry(credentialsId: 'docker-creds', url: 'https://index.docker.io/v1/') {
+              dockerImage.push()
+          }
+          sh "Pushed successfully!"
         }
       }
     }
