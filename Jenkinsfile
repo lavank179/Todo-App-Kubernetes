@@ -6,7 +6,7 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo Checking out the master branch'
-        // checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github_pat', url: 'https://github.com/lavank179/Todo-App-Kubernetes']])
+      // checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github_pat', url: 'https://github.com/lavank179/Todo-App-Kubernetes']])
       }
     }
     stage('Build') {
@@ -21,10 +21,15 @@ pipeline {
           // docker.withRegistry('https://index.docker.io/v1/', 'docker-creds') {
           //     dockerImage.push()
           // }
-          docker push ${DOCKER_IMAGE}
-          sh "Pushed successfully!"
+          docker push ${ DOCKER_IMAGE }
+          sh 'Pushed successfully!'
         }
       }
+    }
+  }
+  post {
+    always {
+      cleanWs()
     }
   }
 }
