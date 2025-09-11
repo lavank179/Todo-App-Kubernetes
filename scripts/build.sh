@@ -3,9 +3,9 @@
 ls -ltr && cd frontend && docker build -t ${DOCKER_IMAGE} .
 docker images | grep ${DOCKER_IMAGE}
 
-echo "user: $REGISTRY_CREDENTIALS"
-echo "user: $REGISTRY_CREDENTIALS_Password"
+echo "user: $DOCKER_USER"
+echo "user: $DOCKER_PASS"
 
-echo "$REGISTRY_CREDENTIALS_Password" | docker login --username "$REGISTRY_CREDENTIALS_Username" --password-stdin
+echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
 docker push ${DOCKER_IMAGE}
 echo "Pushed successfully!"
