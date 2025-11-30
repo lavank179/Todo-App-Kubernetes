@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+tlogs
 
 # Runtime data
 pids
@@ -37,3 +38,6 @@ yarn-error.log
 .DS_Store
 Thumbs.db
 *.lock
+
+*.mp4
+*.mkv

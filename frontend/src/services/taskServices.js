@@ -1,6 +1,7 @@
 import axios from "axios";
 // const apiUrl = process.env.REACT_APP_BACKEND_URL //"http://localhost:8080/api/tasks";
-const apiUrl = "/api/tasks"; // Nginx reverse-proxy it
+const apiUrl = "/api/tasks"; // Nginx reverse-proxies it
+// const apiUrl = "http://localhost:8881/api/tasks"; // Directly to backend for development
 console.log(apiUrl)
 export function getTasks() {
     return axios.get(apiUrl);

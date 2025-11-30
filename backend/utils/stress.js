@@ -1,4 +1,4 @@
-const { logger } = require("./utils/logger");
+const { logger } = require("./logger");
 
 function stressCPUBlocking(count = 5000000){
   logger.info("stress starting...");

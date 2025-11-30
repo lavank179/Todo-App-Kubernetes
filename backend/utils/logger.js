@@ -1,47 +1,70 @@
-const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 const dateTime = new Date();
-// dateTime.setDate(dateTime.getDate());
 const dateString = dateTime.toISOString().split('T')[0];
 
-// const logFileFormat = winston.format.combine(
-//   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.sss'}),
-//   winston.format.printf(info => `${info.timestamp} ${info.level} ${process.pid} ${info.message}`), //tslint:disable-line
-// );
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, '..', 'tlogs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
-const logFileFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-  winston.format((info) => {
-    info.pid = process.pid;
-    return info;
-  })(),
-  winston.format.json()
-);
+const logFilePath = path.join(logsDir, 'app.log');
 
+// Simple logger that mimics winston's interface
+const logger = {
+  info: (message) => {
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 23);
+    const logEntry = JSON.stringify({
+      timestamp,
+      level: 'info',
+      pid: process.pid,
+      message
+    }) + '\n';
 
-// Log stream to .log file.
-const options = {
-  console: {
-    colorize: false,
-    handleExceptions: true,
-    level: 'debug',
-    json: true
+    fs.appendFileSync(logFilePath, logEntry);
+    console.log(`[INFO] ${message}`);
   },
-  file: {
-    colorize: false,
-    filename: `./tlogs/app.log`,
-    format: logFileFormat,
-    handleExceptions: true,
-    level: 'info',
-    json: true
+
+  error: (message) => {
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 23);
+    const logEntry = JSON.stringify({
+      timestamp,
+      level: 'error',
+      pid: process.pid,
+      message
+    }) + '\n';
+
+    fs.appendFileSync(logFilePath, logEntry);
+    console.error(`[ERROR] ${message}`);
+  },
+
+  warn: (message) => {
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 23);
+    const logEntry = JSON.stringify({
+      timestamp,
+      level: 'warn',
+      pid: process.pid,
+      message
+    }) + '\n';
+
+    fs.appendFileSync(logFilePath, logEntry);
+    console.warn(`[WARN] ${message}`);
+  },
+
+  debug: (message) => {
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 23);
+    const logEntry = JSON.stringify({
+      timestamp,
+      level: 'debug',
+      pid: process.pid,
+      message
+    }) + '\n';
+
+    fs.appendFileSync(logFilePath, logEntry);
+    console.log(`[DEBUG] ${message}`);
   }
 };
-
-const logger = winston.createLogger({
-  level: 'info',  // Set the minimum logging level
-  transports: [
-    new winston.transports.File(options.file), // Log to the console
-  ],
-});
 
 module.exports = { logger };

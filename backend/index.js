@@ -1,12 +1,12 @@
 const tasks = require("./routes/tasks");
-const connection = require("./db");
-const stressCpu = require("./stress");
+const { connectToDB } = require("./utils/db");
+const stressCpu = require("./utils/stress");
 const cors = require("cors");
 const express = require("express");
 const app = express();
 const { logger } = require("./utils/logger");
 
-// connection();
+connectToDB();
 
 // const fs = require('fs');
 // const logStream = fs.createWriteStream('./tlogs/app.log', { flags: 'a' });
