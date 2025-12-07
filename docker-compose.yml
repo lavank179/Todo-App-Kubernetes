@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  dynamodb:
+    container_name: mongodb
+    image: bitnami/mongodb:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_ROOT_PASSWORD=keysecret
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=adminpass
+      - MONGODB_DATABASE=task
+    # volumes:
+    #   - ./mongodb/data:/bitnami/mongodb/data:rw
+    #   - ./mongodb/backup:/backup
+    restart: always
+  todo-backend:
+    container_name: todo-backend
+    build: ./backend
+    ports:
+      - "8881:8881"
+    environment:
+      - MONGO_CONN_STR=mongodb://host.docker.internal:27017/task?authSource=task
+      - USE_DB_AUTH=true
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=adminpass
+    volumes:
+      - ./backend/video.mp4:/usr/src/app/video.mp4
+      - ./backend/tlogs/app.log:/usr/src/app/tlogs/app.log
+    restart: always
+  todo-frontend:
+    container_name: todo-frontend
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      - BACKEND_URL=http://host.docker.internal:8881
+    restart: always
