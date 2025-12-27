@@ -27,7 +27,7 @@ app.get('/ok', (req, res) => {
 app.use("/api/tasks", tasks);
 
 app.get("/stress", (req, res) => {
-    res.status(200).send('Stress Completed! counted: ' + stressCpu(5000000));
+    res.status(200).send('Stress Completed! counted: ' + stressCpu(500000000));
   })
 
 app.get('/videoplayer', (req, res) => {
