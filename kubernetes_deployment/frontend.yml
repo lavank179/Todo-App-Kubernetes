@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  namespace: todo-app
+spec:
+  selector:
+    app: frontend
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 80
+      # nodePort: 32752
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: todo-app
+  annotations:
+    kubernetes.io/change-cause: "version 1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: todo-app-kubernetes-todo-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          env:
+            - name: BACKEND_URL
+              value: http://backend-svc.todo-app:8881

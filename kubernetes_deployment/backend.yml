@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  namespace: todo-app
+spec:
+  selector:
+    app: backend
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8881
+      targetPort: 8080
+      # nodePort: 32751
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: todo-app
+  annotations:
+    kubernetes.io/change-cause: "version 1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: todo-app-kubernetes-todo-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_CONN_STR
+              value: 'mongodb://admin:adminpass@mongo-svc.todo-app:27017/?authSource=task'
+            - name: USE_DB_AUTH
+              value: "true"
+            - name: MONGO_PASSWORD
+              value: "adminpass"
+            - name: MONGO_USERNAME
+              value: "admin"
+            - name: PORT
+              value: "8080"
+          volumeMounts:
+            - name: todo-storage
+              mountPath: /usr/src/app/staticfiles
+              subPath: backend/staticfiles
+              readOnly: true
+            - name: todo-storage
+              mountPath: /usr/src/app/tlogs
+              subPath: logs/backend
+
+      volumes:
+        - name: todo-storage
+          persistentVolumeClaim:
+            claimName: todo-app-storage-pvc
