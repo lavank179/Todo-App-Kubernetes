@@ -35,8 +35,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./backend/video.mp4:/usr/src/app/video.mp4
-      - ./backend/tlogs/app.log:/usr/src/app/tlogs/app.log
+      - ./backend/video.mp4:/usr/src/app/staticfiles/video.mp4
+      - ./logs/backend/app.log:/usr/src/app/tlogs/app.log
     restart: always
     # networks:
     #   - minikube
@@ -47,7 +47,7 @@ services:
     container_name: todo-frontend
     build: ./frontend
     ports:
-      - "3000:80"
+      - "3331:80"
     environment:
       - BACKEND_URL=http://host.docker.internal:8881
     extra_hosts:
@@ -55,6 +55,31 @@ services:
     restart: always
     depends_on:
       - todo-backend
+  fluent-bit:
+    image: fluent/fluent-bit:2.2
+    container_name: fluent-bit
+    volumes:
+      - ./logging_and_monitoring/fluent_bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logging_and_monitoring/fluent_bit/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./logging_and_monitoring/fluent_bit/extract_service.lua:/fluent-bit/etc/extract_service.lua
+      - ./logs:/logs:ro
+      - fluentbit-state:/fluent-bit/state
+    command: [
+      "fluent-bit",
+      "-c", "/fluent-bit/etc/fluent-bit.conf"
+    ]
+    depends_on:
+      - todo-frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  fluentbit-state:
+
+# networks:
+#   observability:
+#     external: true
+
 
 # networks:
 #   minikube:
