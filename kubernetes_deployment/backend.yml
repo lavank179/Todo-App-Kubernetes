@@ -32,6 +32,7 @@ spec:
       labels:
         app: backend
     spec:
+      nodeName: minikube
       containers:
         - name: backend
           image: todo-app-kubernetes-todo-backend:latest
@@ -40,7 +41,7 @@ spec:
             - containerPort: 8080
           env:
             - name: MONGO_CONN_STR
-              value: 'mongodb://admin:adminpass@mongo-svc.todo-app:27017/?authSource=task'
+              value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
             - name: USE_DB_AUTH
               value: "true"
             - name: MONGO_PASSWORD
@@ -62,3 +63,6 @@ spec:
         - name: todo-storage
           persistentVolumeClaim:
             claimName: todo-app-storage-pvc
+        # - name: config-volume
+        #   configMap:
+        #     name: fluent-bit-configs

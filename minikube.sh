@@ -15,3 +15,16 @@ minikube mount /media/homepc/FILES/lavan-practice/Todo-App-Kubernetes/persistent
 
 kubectl -n todo-app port-forward service/frontend-svc 3331:3000
 alias k="kubectl -n todo-app"
+
+
+minikube ssh
+cd /
+sudo mkdir todo_storage
+cd todo_storage/
+sudo mkdir logs
+sudo mkdir backend
+cd logs/
+sudo mkdir backend
+sudo mkdir frontend
+cd ../backend/
+sudo mkdir staticfiles

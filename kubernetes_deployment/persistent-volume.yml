@@ -10,7 +10,7 @@ spec:
     - ReadWriteMany
   storageClassName: manual
   hostPath:
-    path: /media/homepc/FILES/lavan-practice/Todo-App-Kubernetes/persistent-stores/mongo-vol
+    path: /persistent-stores/mongo-vol
   nodeAffinity: # Ensures the scheduler knows where this PV lives
     required:
       nodeSelectorTerms:
