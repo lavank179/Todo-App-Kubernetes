@@ -31,16 +31,16 @@ class App extends Tasks {
                         </form>
                         <div className="tasks-list">
                             {tasks.map((task) => (
-                                <Paper key={task._id} className="task-item">
+                                <Paper key={task.id} className="task-item">
                                     <Checkbox
                                         checked={task.completed}
-                                        onClick={() => this.handleUpdate(task._id)}
+                                        onClick={() => this.handleUpdate(task.id)}
                                         color="primary"
                                     />
                                     <div className={task.completed ? "task-text completed" : "task-text"}>
                                         {task.task}
                                     </div>
-                                    <Button onClick={() => this.handleDelete(task._id)} color="secondary" className="delete-task-btn">
+                                    <Button onClick={() => this.handleDelete(task.id)} color="secondary" className="delete-task-btn">
                                         Delete
                                     </Button>
                                 </Paper>

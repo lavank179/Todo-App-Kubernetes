@@ -1,20 +1,20 @@
-# Use the official Node.js 14 image as a base image
-FROM node:14-alpine
 
-# Set the working directory in the container
+FROM python:3.12.4-slim AS builder
+
+# Set environment variables to prevent Python from writing .pyc files and unbuffer stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /usr/src/app
 
-# Copy the package.json and package-lock.json files to the container
-COPY package*.json ./
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && rm -rf /var/lib/apt/lists/*
 
-# Install the application's dependencies inside the container
-RUN npm install
 
-# Copy the rest of the application code to the container
+FROM python:3.12.4-slim AS final
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY . .
-
-# Expose Port to the container
 EXPOSE 8881
-
-# Specify the command to run when the container starts
-CMD [ "node", "index.js" ]
+CMD ["python3", "main.py"]

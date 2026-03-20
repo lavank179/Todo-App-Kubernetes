@@ -39,7 +39,7 @@ class Tasks extends Component {
         const originalTasks = this.state.tasks;
         try {
             const tasks = [...originalTasks];
-            const index = tasks.findIndex((task) => task._id === currentTask);
+            const index = tasks.findIndex((task) => task.id === currentTask);
             tasks[index] = { ...tasks[index] };
             tasks[index].completed = !tasks[index].completed;
             this.setState({ tasks });
@@ -56,7 +56,7 @@ class Tasks extends Component {
         const originalTasks = this.state.tasks;
         try {
             const tasks = originalTasks.filter(
-                (task) => task._id !== currentTask
+                (task) => task.id !== currentTask
             );
             this.setState({ tasks });
             await deleteTask(currentTask);

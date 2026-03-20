@@ -142,3 +142,7 @@ vite.config.ts.timestamp-*
 
 *.mp4
 *.mkv
+
+
+*venv*
+__pycache__*
