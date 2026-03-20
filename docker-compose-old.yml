@@ -1,0 +1,97 @@
+services:
+  # mongodb:
+  #   container_name: mongodb
+  #   image: bitnami/mongodb:latest
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGODB_ROOT_PASSWORD=keysecret
+  #     - MONGODB_USERNAME=admin
+  #     - MONGODB_PASSWORD=adminpass
+  #     - MONGODB_DATABASE=task
+  #   # volumes:
+  #   #   - ./mongodb/data:/bitnami/mongodb/data:rw
+  #   #   - ./mongodb/backup:/backup
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  postgres:
+    container_name: postgres-18
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=keysecret
+      - POSTGRES_USER=postgres
+
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+  # todo-backend:
+  #   container_name: todo-backend
+  #   build: ./backend
+  #   ports:
+  #     - "8881:8881"
+  #   environment:
+  #     - MONGO_CONN_STR=mongodb://mongodb:27017/task?authSource=task
+  #     # below url if mongo running on k8s on minikube network
+  #     # - MONGO_CONN_STR=mongodb://192.168.67.2:32017/task?authSource=task
+  #     - USE_DB_AUTH=true
+  #     - MONGO_USERNAME=admin
+  #     - MONGO_PASSWORD=adminpass
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   volumes:
+  #     - ./backend/video.mp4:/usr/src/app/staticfiles/video.mp4
+  #     - ./logs/backend/app.log:/usr/src/app/tlogs/app.log
+  #   restart: always
+  #   # networks:
+  #   #   - minikube
+  #   # depends_on:
+  #   #   mongodb:
+  #   #     condition: service_healthy
+  todo-frontend:
+    container_name: todo-frontend
+    build: ./frontend
+    ports:
+      - "3331:80"
+    environment:
+      - BACKEND_URL=http://localhost:8881
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+    # depends_on:
+    #   - todo-backend
+  fluent-bit:
+    image: fluent/fluent-bit:2.2
+    container_name: fluent-bit
+    volumes:
+      - ./logging_and_monitoring/fluent_bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logging_and_monitoring/fluent_bit/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./logging_and_monitoring/fluent_bit/extract_service.lua:/fluent-bit/etc/extract_service.lua
+      - ./logs:/logs:ro
+      - fluentbit-state:/fluent-bit/state
+    command: [
+      "fluent-bit",
+      "-c", "/fluent-bit/etc/fluent-bit.conf"
+    ]
+    depends_on:
+      - todo-frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  fluentbit-state:
+
+# networks:
+#   observability:
+#     external: true
+
+
+# networks:
+#   minikube:
+#     external: true
