@@ -37,6 +37,22 @@ if [ "$ACTION" = "down" ]; then
   exit 0
 fi
 
+if [ "$ACTION" = "restart-nondb" ]; then
+  echo "Stopping nondb containers..."
+  docker compose -f "$COMPOSE_FILE" down todo-backend todo-frontend
+  echo "Starting nondb containers..."
+  docker compose -f "$COMPOSE_FILE" up -d todo-backend todo-frontend
+  exit 0
+fi
+
+if [ "$ACTION" = "recreate-nondb" ]; then
+  echo "Stopping nondb containers..."
+  docker compose -f "$COMPOSE_FILE" down todo-backend todo-frontend
+  echo "Starting nondb containers..."
+  docker compose -f "$COMPOSE_FILE" up -d --build todo-backend todo-frontend
+  exit 0
+fi
+
 ############################################
 # START POSTGRES
 ############################################
@@ -146,6 +162,10 @@ do
       "INSERT INTO schema_migrations VALUES ('$version')"
   fi
 done
+
+if [ "$ACTION" = "onlydb" ]; then
+  exit 0
+fi
 
 ############################################
 # START ALL CONTAINERS

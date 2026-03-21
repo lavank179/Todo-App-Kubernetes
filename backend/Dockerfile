@@ -1,20 +1,17 @@
+FROM python:3.12.4-alpine AS builder
+WORKDIR /app
 
-FROM python:3.12.4-slim AS builder
-
-# Set environment variables to prevent Python from writing .pyc files and unbuffer stdout/stderr
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /usr/src/app
+# needed for Pydantic/uPydantic
+RUN apk add --no-cache gcc musl-dev libffi-dev
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
+FROM python:3.12.4-alpine AS final
+WORKDIR /app
 
-FROM python:3.12.4-slim AS final
-WORKDIR /usr/src/app
-
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /install /usr/local
 COPY . .
+
 EXPOSE 8881
-CMD ["python3", "main.py"]
+CMD ["python", "main.py"]

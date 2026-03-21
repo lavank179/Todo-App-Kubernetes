@@ -26,52 +26,36 @@ async def create_task(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.put("/{task_id}")
 async def mark_complete(task_id: UUID, request: Request, db: AsyncSession = Depends(get_db)):
-    try:
-        # 1. Get req.body equivalent
-        data = await request.json()
-        # 2. Update and Return (similar to findOneAndUpdate)
-        query = (
-            update(Task)
-            .where(Task.id == task_id)
-            .values(**data)        # Unpacks dict just like req.body
-            .returning(Task)       # Returns the updated row
-        )
-        
-        result = await db.execute(query)
-        updated_task = result.scalar_one_or_none()
-        
-        if not updated_task:
-            return {"error": "Task not found"}
+    # 1. Get req.body equivalent
+    data = await request.json()
+    query = (
+        update(Task)
+        .where(Task.id == task_id)
+        .values(**data)        # Unpacks dict just like req.body
+        .returning(Task)       # Returns the updated row
+    )
+    
+    result = await db.execute(query)
+    updated_task = result.scalar_one_or_none()
+    
+    if not updated_task:
+        raise HTTPException(status_code=404, detail="Task not found")
 
-        await db.commit()
-        return updated_task  # res.send(task)
-        
-    except Exception as e:
-        return {"error": str(e)}
+    await db.commit()
+    return updated_task  # res.send(task)
 
 
 @router.delete("/{task_id}")
 async def delete_task(task_id: str, db: AsyncSession = Depends(get_db)):
-    try:
-        # 1. Create delete query with returning (like findByIdAndDelete)
-        query = (
-            delete(Task)
-            .where(Task.id == task_id)
-            .returning(Task)
-        )
-        
-        # 2. Execute and get the deleted record
-        result = await db.execute(query)
-        deleted_task = result.scalar_one_or_none()
-        
-        if not deleted_task:
-            return {"error": "Task not found"}
-
-        # 3. Finalize the transaction
-        await db.commit()
-        
-        # 4. Return the deleted task (res.send(task))
-        return deleted_task
-        
-    except Exception as e:
-        return {"error": str(e)}
+    query = (
+        delete(Task)
+        .where(Task.id == task_id)
+        .returning(Task)
+    )
+    result = await db.execute(query)
+    deleted_task = result.scalar_one_or_none()
+    
+    if not deleted_task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    await db.commit()
+    return deleted_task

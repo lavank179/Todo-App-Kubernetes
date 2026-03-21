@@ -1,9 +1,10 @@
 from fastapi import Request, HTTPException
 from fastapi.responses import StreamingResponse
 import os
+from utils.config import settings
 
 
-VIDEO_PATH = "video.mp4"
+VIDEO_PATH = settings.VIDEO_PATH
 CHUNK_SIZE = 1 * 10**6  # 1MB
 
 async def stream_video(request: Request):

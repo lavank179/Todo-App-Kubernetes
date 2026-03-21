@@ -22,11 +22,12 @@ services:
       - APP_DB_USER=admin
       - APP_DB_PASSWORD=adminpass
       - APP_DB=todo_app
+      - VIDEO_PATH=/app/utils/video.mp4
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./backend/video.mp4:/usr/src/app/utils/video.mp4
-      - ./logs/backend/app.log:/usr/src/app/tlogs/app.log
+      - ./backend/video.mp4:/app/utils/video.mp4
+      - ./logs/backend/app.log:/app/tlogs/app.log
     restart: always
   todo-frontend:
     container_name: todo-frontend

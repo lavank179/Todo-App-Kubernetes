@@ -1,10 +1,11 @@
 from fastapi import FastAPI, APIRouter, Request
-from fastapi.responses import HTMLResponse
-from routers import task_router
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import OperationalError, DBAPIError
 from utils.video_streamer import stream_video
 from utils.stress import stressCPUBlocking
 from utils.logger import logger
+from routers import task_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -24,8 +25,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(api_router)
+@app.exception_handler(OperationalError)
+async def db_connection_error_handler(request: Request, exc: OperationalError):
+    logger.error("DB connection error", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Database connection failed"}
+    )
 
 
+@app.exception_handler(DBAPIError)
+async def db_query_error_handler(request: Request, exc: DBAPIError):
+    logger.error("DB query error", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Database operation failed"}
+    )
+
+
+#-----------------EXTRA ROUTES--------------------------
 @app.get("/")
 def message():
     return HTMLResponse('<h1>Welcome to Todo App</h1>')
