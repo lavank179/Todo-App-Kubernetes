@@ -76,3 +76,13 @@ spec:
         # - name: config-volume
         #   configMap:
         #     name: fluent-bit-configs
+      
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - kind-cluster-control-plane
