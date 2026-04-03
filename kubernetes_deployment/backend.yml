@@ -10,7 +10,7 @@ spec:
   ports:
     - protocol: TCP
       port: 8881
-      targetPort: 8080
+      targetPort: 8881
       # nodePort: 32751
 
 ---
@@ -32,31 +32,41 @@ spec:
       labels:
         app: backend
     spec:
-      nodeName: minikube
+      nodeName: kind-cluster-control-plane
       containers:
         - name: backend
           image: todo-app-kubernetes-todo-backend:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 8080
+            - containerPort: 8881
           env:
-            - name: MONGO_CONN_STR
-              value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
-            - name: USE_DB_AUTH
-              value: "true"
-            - name: MONGO_PASSWORD
-              value: "adminpass"
-            - name: MONGO_USERNAME
+            # - name: MONGO_CONN_STR
+            #   value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
+            # - name: USE_DB_AUTH
+            #   value: "true"
+            # - name: MONGO_PASSWORD
+            #   value: "adminpass"
+            # - name: MONGO_USERNAME
+            #   value: "admin"
+            # - name: PORT
+            #   value: "8080"
+            - name: DB_HOST
+              value: "host.docker.internal"
+            - name: APP_DB_USER
               value: "admin"
-            - name: PORT
-              value: "8080"
+            - name: APP_DB_PASSWORD
+              value: "adminpass"
+            - name: APP_DB
+              value: "todo_app"
+            - name: VIDEO_PATH
+              value: "/app/utils/staticfiles/video.mp4"
           volumeMounts:
             - name: todo-storage
-              mountPath: /usr/src/app/staticfiles
+              mountPath: /app/utils/staticfiles
               subPath: backend/staticfiles
               readOnly: true
             - name: todo-storage
-              mountPath: /usr/src/app/tlogs
+              mountPath: /app/tlogs
               subPath: logs/backend
 
       volumes:

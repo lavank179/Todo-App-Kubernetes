@@ -32,7 +32,6 @@ spec:
       labels:
         app: frontend
     spec:
-      nodeName: minikube
       containers:
         - name: frontend
           image: todo-app-kubernetes-todo-frontend:latest
@@ -42,3 +41,11 @@ spec:
           env:
             - name: BACKEND_URL
               value: http://backend-svc.todo-app:8881
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+              - kind-cluster-worker

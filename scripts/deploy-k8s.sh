@@ -1,7 +1,8 @@
 #!/bin/bash
 
 DELETE=$1
-FILES=("namespace" "persistent-volume" "mongodb" "todo-app-storage-pv" "backend" "frontend" "fluent-daemonset")
+# FILES=("namespace" "persistent-volume" "mongodb" "todo-app-storage-pv" "backend" "frontend" "fluentbit")
+FILES=("namespace" "todo-app-storage-pv" "backend" "frontend")
 total_files=${#FILES[@]}
 
 function deployYML {
@@ -16,7 +17,7 @@ function deleteYML {
 
 if [[ $DELETE == "delete" ]]; then
     echo "Deleting Todo-App-Kubernetes deployment"
-    kubectl delete configmap fluent-bit-configs
+    kubectl -n todo-app delete configmap fluent-bit-configs
     for (( i=(($total_files-1)); i>=0; i-- )); do
       file="${FILES[$i]}.yml"
       deleteYML "./kubernetes_deployment/$file"
@@ -24,7 +25,7 @@ if [[ $DELETE == "delete" ]]; then
     echo "Completed Todo-App-Kubernetes deletion"
 else
     echo "Starting Todo-App-Kubernetes deployment"
-    kubectl create configmap fluent-bit-configs --from-file=./logging_and_monitoring/fluent_bit/fluent-bit.conf --from-file=./logging_and_monitoring/fluent_bit/parsers.conf --from-file=./logging_and_monitoring/fluent_bit/extract_service.lua
+    kubectl -n todo-app create configmap fluent-bit-configs --from-file=./logging_and_monitoring/fluent_bit/fluent-bit.conf --from-file=./logging_and_monitoring/fluent_bit/parsers.conf --from-file=./logging_and_monitoring/fluent_bit/extract_service.lua
     for (( i=0; i<$total_files; i++ )); do
       file="${FILES[$i]}.yml"
       deployYML "./kubernetes_deployment/$file"
