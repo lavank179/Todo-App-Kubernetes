@@ -39,6 +39,13 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8881
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "250m"
+            limits:
+              memory: "150Mi"
+              cpu: "500m"
           env:
             # - name: MONGO_CONN_STR
             #   value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
