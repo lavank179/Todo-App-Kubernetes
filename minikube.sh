@@ -29,6 +29,7 @@ minikube cp ./backend/video.mp4 /todo_storage/backend/staticfiles/video.mp4
 minikube mount /media/homepc/FILES/lavan-practice/Todo-App-Kubernetes/persistent-stores/mongo-vol:/persistent-stores/mongo-vol
 
 kubectl -n todo-app port-forward service/frontend-svc 3331:3000
+kubectl -n todo-app port-forward service/backend-svc 3332:8881
 alias k="kubectl -n todo-app"
 
 
