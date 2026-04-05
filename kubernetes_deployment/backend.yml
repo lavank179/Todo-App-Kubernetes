@@ -51,36 +51,19 @@ spec:
               path: /api/health
               port: 8881
             initialDelaySeconds: 3
-            periodSeconds: 20
+            periodSeconds: 10
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /api/health
               port: 8881
-            initialDelaySeconds: 3
             periodSeconds: 10
             timeoutSeconds: 5
-          env:
-            # - name: MONGO_CONN_STR
-            #   value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
-            # - name: USE_DB_AUTH
-            #   value: "true"
-            # - name: MONGO_PASSWORD
-            #   value: "adminpass"
-            # - name: MONGO_USERNAME
-            #   value: "admin"
-            # - name: PORT
-            #   value: "8080"
-            - name: DB_HOST
-              value: "host.docker.internal"
-            - name: APP_DB_USER
-              value: "admin"
-            - name: APP_DB_PASSWORD
-              value: "adminpass"
-            - name: APP_DB
-              value: "todo_app"
-            - name: VIDEO_PATH
-              value: "/app/utils/staticfiles/video.mp4"
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
           volumeMounts:
             - name: todo-storage
               mountPath: /app/utils/staticfiles

@@ -2,7 +2,7 @@
 
 DELETE=$1
 # FILES=("namespace" "persistent-volume" "mongodb" "todo-app-storage-pv" "backend" "frontend" "fluentbit")
-FILES=("namespace" "todo-app-storage-pv" "backend" "frontend")
+FILES=("namespace" "todo-app-storage-pv" "config-and-secrets" "backend" "frontend")
 total_files=${#FILES[@]}
 
 function deployYML {
