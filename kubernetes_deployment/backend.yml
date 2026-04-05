@@ -46,6 +46,20 @@ spec:
             limits:
               memory: "150Mi"
               cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8881
+            initialDelaySeconds: 3
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8881
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 5
           env:
             # - name: MONGO_CONN_STR
             #   value: 'mongodb://admin:adminpass@mongo-svc.todo-app.svc.cluster.local:27017/?authSource=task'
