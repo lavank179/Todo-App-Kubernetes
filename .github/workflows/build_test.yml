@@ -19,12 +19,16 @@ jobs:
     - name: build and test
       run: |
         echo "Building and testing the project..."
-        echo "BUILD_NUMBER='${{ env.MAJOR_VERSION }}.${{ github.run_number }}'" >> $GITHUB_ENV
-        echo "FRONTEND_IMAGE_TAG=${{ env.REGISTRY }}/frontend:$BUILD_NUMBER" >> $GITHUB_ENV
-        echo "BACKEND_IMAGE_TAG=${{ env.REGISTRY }}/backend:$BUILD_NUMBER" >> $GITHUB_ENV
-        export $BUILD_NUMBER
-        export $FRONTEND_IMAGE_TAG
-        export $BACKEND_IMAGE_TAG
+        # 1. Define shell variables for use in THIS step
+        BUILD_NUMBER="${{ env.MAJOR_VERSION }}.${{ github.run_number }}"
+        FRONT_TAG="${{ env.REGISTRY }}/frontend:$BUILD_NUMBER"
+        BACK_TAG="${{ env.REGISTRY }}/backend:$BUILD_NUMBER"
+
+        # 2. Append to GITHUB_ENV for use in FUTURE steps
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
+        echo "FRONTEND_IMAGE_TAG=$FRONT_TAG" >> $GITHUB_ENV
+        echo "BACKEND_IMAGE_TAG=$BACK_TAG" >> $GITHUB_ENV
+
         ./scripts/build.sh build_containers
         ./scripts/build.sh test_containers
 
