@@ -1,0 +1,24 @@
+name: Build And Test
+run-name: ${{ github.actor }} is starting the build action.
+on:
+  push:
+    branches:
+    - '**'
+
+env:
+  MAJOR_VERSION: 1
+  IMAGE_REPO: testrepo
+  BUILD_NUMBER: "$MAJOR_VERSION.${{ github.run_number }}"
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu:24.04
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: build and test
+      run: |
+        echo "Building and testing the project..."
+        ./build.sh build_containers
+        ./build.sh test_containers 
