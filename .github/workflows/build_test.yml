@@ -34,6 +34,6 @@ jobs:
     - name: Push container images
       if: github.ref == 'refs/heads/main'
       run: |
-        docker push FRONTEND_IMAGE_TAG
-        docker push BACKEND_IMAGE_TAG
+        docker push ${{ env.FRONTEND_IMAGE_TAG }}
+        docker push ${{ env.BACKEND_IMAGE_TAG }}
         echo "Containers pushed successfully!"
