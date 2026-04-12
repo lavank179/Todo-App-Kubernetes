@@ -8,7 +8,6 @@ on:
 env:
   MAJOR_VERSION: 1
   IMAGE_REPO: testrepo
-  BUILD_NUMBER: "${{ env.MAJOR_VERSION }}.${{ github.run_number }}"
 
 jobs:
   build_and_test:
@@ -20,5 +19,6 @@ jobs:
     - name: build and test
       run: |
         echo "Building and testing the project..."
+        export BUILD_NUMBER='"${{ env.MAJOR_VERSION }}.${{ github.run_number }}"'
         ./scripts/build.sh build_containers
         ./scripts/build.sh test_containers 
