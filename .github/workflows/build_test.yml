@@ -20,5 +20,5 @@ jobs:
     - name: build and test
       run: |
         echo "Building and testing the project..."
-        ./build.sh build_containers
-        ./build.sh test_containers 
+        ./scripts/build.sh build_containers
+        ./scripts/build.sh test_containers 
