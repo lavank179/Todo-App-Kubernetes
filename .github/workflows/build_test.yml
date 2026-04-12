@@ -26,8 +26,8 @@ jobs:
         # 1. Assign to local shell variables
         # This makes them available IMMEDIATELY in this run block
         BUILD_NUMBER="${{ env.MAJOR_VERSION }}.${{ github.run_number }}"
-        FRONTEND_IMAGE_TAG="${{ env.REGISTRY }}/${{ env.COMPONENT }}/frontend:$BUILD_NUMBER"
-        BACKEND_IMAGE_TAG="${{ env.REGISTRY }}/${{ env.COMPONENT }}/backend:$BUILD_NUMBER"
+        FRONTEND_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.COMPONENT }}-frontend:$BUILD_NUMBER"
+        BACKEND_IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.COMPONENT }}-backend:$BUILD_NUMBER"
 
         # 2. Export them for the current shell session
         # Now any scripts called in this block can see these variables
