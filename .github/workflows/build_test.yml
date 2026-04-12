@@ -32,8 +32,8 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push container images
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker push FRONTEND_IMAGE_TAG
-          docker push BACKEND_IMAGE_TAG
-          echo "Containers pushed successfully!"
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker push FRONTEND_IMAGE_TAG
+        docker push BACKEND_IMAGE_TAG
+        echo "Containers pushed successfully!"
