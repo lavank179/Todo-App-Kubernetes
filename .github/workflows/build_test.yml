@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 
 
 
     - name: build and test
@@ -47,11 +49,18 @@ jobs:
     - name: Check for changes
       id: changes
       run: |
-        echo "Base SHA: ${{ github.event.before }}"
-        echo "Head SHA: ${{ github.sha }}"
+        BASE="${{ github.event.before }}"
+        HEAD="${{ github.sha }}"
+        echo "Base SHA: $BASE"
+        echo "Head SHA: $HEAD"
 
-        CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-
+        # Handle first commit or missing base
+        if ! git cat-file -e $BASE^{commit} 2>/dev/null; then
+          echo "Base commit not found, using full repo"
+          CHANGED_FILES=$(git ls-files)
+        else
+          CHANGED_FILES=$(git diff --name-only $BASE $HEAD)
+        fi
         echo "Changed files:"
         echo "$CHANGED_FILES"
 
