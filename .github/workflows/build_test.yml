@@ -19,7 +19,9 @@ jobs:
     - name: build and test
       run: |
         echo "Building and testing the project..."
-        export BUILD_NUMBER='${{ env.MAJOR_VERSION }}.${{ github.run_number }}'
+        echo "BUILD_NUMBER='${{ env.MAJOR_VERSION }}.${{ github.run_number }}'" >> $GITHUB_ENV
+        echo "FRONTEND_IMAGE_TAG=${{ env.REGISTRY }}/frontend:$BUILD_NUMBER" >> $GITHUB_ENV
+        echo "BACKEND_IMAGE_TAG=${{ env.REGISTRY }}/backend:$BUILD_NUMBER" >> $GITHUB_ENV
         ./scripts/build.sh build_containers
         ./scripts/build.sh test_containers
 
@@ -34,6 +36,6 @@ jobs:
     - name: Push container images
       if: github.ref == 'refs/heads/main'
       run: |
-        docker push ${{ env.FRONTEND_IMAGE_TAG }}
-        docker push ${{ env.BACKEND_IMAGE_TAG }}
+        docker push $FRONTEND_IMAGE_TAG
+        docker push $BACKEND_IMAGE_TAG
         echo "Containers pushed successfully!"
