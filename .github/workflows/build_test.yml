@@ -8,7 +8,7 @@ on:
 env:
   MAJOR_VERSION: 1
   IMAGE_REPO: testrepo
-  BUILD_NUMBER: "$MAJOR_VERSION.${{ github.run_number }}"
+  BUILD_NUMBER: "${{ env.MAJOR_VERSION }}.${{ github.run_number }}"
 
 jobs:
   build_and_test:
