@@ -2,8 +2,13 @@
 set -eox
 
 TASK="${1}"
-IMAGEREPO="${IMAGE_REPO}"
+IMAGEREPO="${REGISTRY}"
 BUILDNUMBER="${BUILD_NUMBER}"
+FRONTEND_IMAGE_TAG="$IMAGEREPO/frontend:$BUILDNUMBER"
+BACKEND_IMAGE_TAG="$IMAGEREPO/backend:$BUILDNUMBER"
+
+export FRONTEND_IMAGE_TAG
+export BACKEND_IMAGE_TAG
 
 # function buildAndPushImage() {
 #   DOCKER_IMAGE="$1:$BUILD_NUMBER"
@@ -17,10 +22,17 @@ BUILDNUMBER="${BUILD_NUMBER}"
 function buildContainers() {
   ls -l
   cd frontend
-  docker build -t "$IMAGEREPO/frontend:$BUILDNUMBER" .
+  docker build -t $FRONTEND_IMAGE_TAG .
   cd ../backend
-  docker build -t "$IMAGEREPO/backend:$BUILDNUMBER" .
+  docker build -t $BACKEND_IMAGE_TAG .
   echo "Containers built successfully!"
+}
+
+function pushContainers() {
+  echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
+  docker push $FRONTEND_IMAGE_TAG
+  docker push $BACKEND_IMAGE_TAG
+  echo "Containers pushed successfully!"
 }
 
 function testContainers() {
@@ -35,6 +47,8 @@ if [[ "$TASK" == "build_containers" ]]; then
   buildContainers
 elif [[ "$TASK" == "test_containers" ]]; then
   testContainers
+elif [[ "$TASK" == "push_containers" ]]; then
+  pushContainers
 else
   echo "Unknown argument for task: $TASK, select either 'build_containers' or 'test_containers'"
   exit 1

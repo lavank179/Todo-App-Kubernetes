@@ -1,4 +1,4 @@
-name: Build And Test
+name: Build Test and Release
 run-name: ${{ github.actor }} is starting the build action.
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 env:
   MAJOR_VERSION: 1
-  IMAGE_REPO: testrepo
+  REGISTRY: ghcr.io
 
 jobs:
   build_and_test:
@@ -21,4 +21,19 @@ jobs:
         echo "Building and testing the project..."
         export BUILD_NUMBER='${{ env.MAJOR_VERSION }}.${{ github.run_number }}'
         ./scripts/build.sh build_containers
-        ./scripts/build.sh test_containers 
+        ./scripts/build.sh test_containers
+
+    - name: Log in to the Container registry only if publish-image branch
+      if: github.ref == 'refs/heads/main'
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push container images
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker push FRONTEND_IMAGE_TAG
+          docker push BACKEND_IMAGE_TAG
+          echo "Containers pushed successfully!"
