@@ -93,7 +93,7 @@ jobs:
       uses: stackrox/kube-linter-action@v1
       with:
         directory: kubernetes_deployment
-        # config: .kube-linter/config.yaml
+        config: .kube-linter/config.yaml
 
     - name: Release to argocd-publish branch
       if: github.ref == 'refs/heads/main'
