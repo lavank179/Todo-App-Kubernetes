@@ -108,5 +108,4 @@ jobs:
         user_name: 'lavank179'
         commit_message: 'Update new kubernetes manifests for argocd deployment - ${{ github.run_number }}'
         destination_branch: 'argocd-publish'
-        destination_branch_create: argocd-publish
     - run: echo "Hurray!!! The app is eligible for global deploy🍏"
