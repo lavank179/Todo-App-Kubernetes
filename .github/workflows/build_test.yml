@@ -92,8 +92,8 @@ jobs:
       if: github.ref == 'refs/heads/main'
       uses: stackrox/kube-linter-action@v1
       with:
-        directory: yamls
-        config: .kube-linter/config.yaml
+        directory: kubernetes_deployment
+        # config: .kube-linter/config.yaml
 
     - name: Release to argocd-publish branch
       if: github.ref == 'refs/heads/main'
